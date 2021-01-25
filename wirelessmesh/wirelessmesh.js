@@ -33,12 +33,12 @@ const entity = new EventSourced(
  *
  * The customerLocationId is the unique entity id
  */
-entity.setInitial(entityId => ({
-  customerLocationId: entityId,
+entity.setInitial(customerLocationId => ({
   added: false,
   removed: false,
   accessToken: "",
-  devices: []}));
+  devices: []})
+);
 
 /*
  * Set a callback to create the behavior given the current state. Since there is no state
@@ -109,6 +109,8 @@ function customerLocationAdded(customerLocationAdded, entityState) {
   entityState.added = true;
   entityState.accessToken = customerLocationAdded.accessToken;
 
+  console.log(JSON.stringify(entityState));
+
   // And return the new state.
   return entityState;
 }
@@ -147,7 +149,6 @@ function removeCustomerLocation(removeCustomerLocationCommand, entityState, ctx)
  * @param entityState the current state to be updated
  */
 function customerLocationRemoved(customerLocationRemoved, entityState) {
-  console.log("customerLocationAdded");
   entityState.removed = true;
 
   // Return the new state.
@@ -162,6 +163,7 @@ function customerLocationRemoved(customerLocationRemoved, entityState) {
  * @return Empty (unused)
  */
 function activateDevice(activateDeviceCommand, entityState, ctx) {
+  console.log("activateDevice:" + entityState.added);
   if (entityState.removed) {
     ctx.fail("customerLocation does not exist");
   }
@@ -176,7 +178,7 @@ function activateDevice(activateDeviceCommand, entityState, ctx) {
     else {
       // Create the event.    
       const deviceActivated = {
-        type: "deviceActivated",
+        type: "DeviceActivated",
         customerLocationId: activateDeviceCommand.customerLocationId,
         deviceId: activateDeviceCommand.deviceId
       };
@@ -195,6 +197,7 @@ function activateDevice(activateDeviceCommand, entityState, ctx) {
  * @param entityState the current state to be updated
  */
 function deviceActivated(deviceActivated, entityState) {
+  console.log("deviceActivated:" + JSON.stringify(entityState));
   const device = {
     deviceId: deviceActivated.deviceId,
     customerLocationId: deviceActivated.customerLocationId,
@@ -203,7 +206,9 @@ function deviceActivated(deviceActivated, entityState) {
     room: ""
   };
 
+  entityState.added = true;
   entityState.devices.push(device);
+  console.log("deviceActivated->out:" + entityState.added);
 
   // Return the new state.
   return entityState;
@@ -231,7 +236,7 @@ function removeDevice(removeDeviceCommand, entityState, ctx) {
     else {
       // Create the event.    
         const deviceRemoved = {
-        type: "deviceRemoved",
+        type: "DeviceRemoved",
         customerLocationId: removeDeviceCommand.customerLocationId,
         deviceId: removeDeviceCommand.deviceId
       };
@@ -250,7 +255,9 @@ function removeDevice(removeDeviceCommand, entityState, ctx) {
  * @param entityState the current state to be updated
  */
 function deviceRemoved(deviceRemoved, entityState) { 
-  // todo: figure out how to remove from array
+  entityState.devices = entityState.devices.filter(device => {
+    return device.deviceId === deviceRemoved.deviceId;
+  })
 
   // Return the new state.
   return entityState;
@@ -264,7 +271,7 @@ function deviceRemoved(deviceRemoved, entityState) {
  * @return Empty (unused)
  */
 function assignRoom(assignRoomCommand, entityState, ctx) {
-  if (removed) {
+  if (entityState.removed) {
     ctx.fail("customerLocation does not exist");
   }
   else {
@@ -278,8 +285,8 @@ function assignRoom(assignRoomCommand, entityState, ctx) {
     else {
       // Create the event.    
       const roomAssigned = {
-        type: "roomAssigned",
-        customerLocationId: removeCustomerLocation.customerLocationId,
+        type: "RoomAssigned",
+        customerLocationId: assignRoomCommand.customerLocationId,
         room: assignRoomCommand.room
       };
       // Emit the event.
@@ -328,7 +335,7 @@ function toggleNightlight(toggleNightlightCommand, entityState, ctx) {
     }
     else {
       const nightlightToggled = {
-        type: "nightlightToggled",
+        type: "NightlightToggled",
         customerLocationId: toggleNightlightCommand.customerLocationId,
         nightlightOn: !existing.nightlightOn
       };
@@ -365,6 +372,7 @@ function nightlightToggled(nightlightToggled, entityState) {
  * @return Empty (unused)
  */
 function getDevices(getDevicesCommand, entityState) {
+  console.log("getDevices:" + JSON.stringify(entityState));
   return entityState.devices;
 }
 
