@@ -33,8 +33,8 @@
     "pretest": "compile-descriptor ./wirelessmeshservice.proto",
     "build": "compile-descriptor ./wirelessmeshservice.proto",
     "start": "node index.js",
-    "dockerbuild": "docker build -f ./Dockerfile -t ${DOCKER_PUBLISH_TO:}/akkaserverless-wirelessmesh-javascript:latest ../..",
-    "dockerpush": "docker push ${DOCKER_PUBLISH_TO:}/akkaserverless-wirelessmesh-javascript:latest",
+    "dockerbuild": "docker build -f ./Dockerfile -t ${DOCKER_REGISTRY:-docker.io}/${DOCKER_USER:}/akkaserverless-wirelessmesh-javascript:latest ../..",
+    "dockerpush": "docker push ${DOCKER_REGISTRY:-docker.io}/${DOCKER_USER:}/akkaserverless-wirelessmesh-javascript:latest",
     "dockerbuildpush": "npm run dockerbuild && npm run dockerpush"
   }
 }
