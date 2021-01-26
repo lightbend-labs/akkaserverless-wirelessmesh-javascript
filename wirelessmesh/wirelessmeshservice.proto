@@ -44,6 +44,10 @@ message ToggleNightlightCommand {
     string deviceId = 2;
 }
 
+message GetCustomerLocationCommand {
+    string customerLocationId = 1 [(.cloudstate.entity_key) = true];
+}
+
 message Device {
     string deviceId = 1;
     bool activated = 2;
@@ -52,12 +56,12 @@ message Device {
     bool nightlightOn = 5;
 }
 
-message Devices {
-    repeated Device device = 1;
-}
-
-message GetDevicesCommand {
-    string customerLocationId = 1 [(.cloudstate.entity_key) = true];
+message CustomerLocation {
+    bool customerLocationId = 1;
+    string accessToken = 2;
+    bool added = 3;
+    bool removed = 4;
+    repeated Device devices = 5;
 }
 
 /**
@@ -100,16 +104,16 @@ service WirelessmeshService {
         };
     }
 
-    rpc GetDevices(GetDevicesCommand) returns (Devices) {
-        option (google.api.http) = {
-            get: "/wirelessmesh/get-devices",
-        };
-    }
-
     rpc ToggleNightlight(ToggleNightlightCommand) returns (google.protobuf.Empty) {
         option (google.api.http) = {
             post: "/wirelessmesh/toggle-nightlight",
             body: "*",
+        };
+    }
+
+    rpc GetCustomerLocation(GetCustomerLocationCommand) returns (CustomerLocation) {
+        option (google.api.http) = {
+            get: "/wirelessmesh/get-customer-location",
         };
     }
 }

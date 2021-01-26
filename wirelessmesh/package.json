@@ -21,7 +21,8 @@
     "@grpc/proto-loader": "^0.5.5",
     "cloudstate": "0.0.3",
     "google-protobuf": "^3.14.0",
-    "grpc": "^1.24.4"
+    "grpc": "^1.24.4",
+    "test": "^0.6.0"
   },
   "devDependencies": {
     "chai": "^4.2.0",
@@ -31,6 +32,9 @@
     "test": "mocha",
     "pretest": "compile-descriptor ./wirelessmeshservice.proto",
     "build": "compile-descriptor ./wirelessmeshservice.proto",
-    "start": "node index.js"
+    "start": "node index.js",
+    "dockerbuild": "docker build -f ./Dockerfile -t ${DOCKER_PUBLISH_TO:}/akkaserverless-wirelessmesh-javascript:latest ../..",
+    "dockerpush": "docker push ${DOCKER_PUBLISH_TO:}/akkaserverless-wirelessmesh-javascript:latest",
+    "dockerbuildpush": "npm run dockerbuild && npm run dockerpush"
   }
 }

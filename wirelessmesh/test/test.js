@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+/**
+ * THIS SECTION SHOULD OPTIMALLY BE BROKEN OUT INTO A TESTKIT FOR REUSE.
+ */
+
 const path = require("path");
 const should = require("chai").should();
 const grpc = require("grpc");
@@ -132,6 +136,7 @@ function sendCommand(call, name, payload) {
     }
   });
   return nextMessage(call).then(msg => {
+    //console.log("xxxxx->" + JSON.stringify(msg));
     should.exist(msg.reply);
     msg.reply.commandId.toNumber().should.equal(cid);
     should.exist(msg.reply.clientAction.reply);
@@ -154,29 +159,67 @@ function sendEvent(call, sequence, event) {
   })
 }
 
-function addCustomerLocation(call, command) {
-  return sendCommand(call, "AddCustomerLocation", root.lookupType("wirelessmeshservice.AddCustomerLocationCommand").create(command));
-}
+/**
+ * END TESTKIT SECTION*************************************************
+ */
 
-function addCustomerLocation(call, command) {
-  return sendCommand(call, "AddCustomerLocation", root.lookupType("wirelessmeshservice.AddCustomerLocationCommand").create(command));
-}
-
-function activateDevice(call, command) {
-  return sendCommand(call, "ActivateDevice", root.lookupType("wirelessmeshservice.ActivateDeviceCommand").create(command));
-}
-
-function assignRoom(call, command) {
-  return sendCommand(call, "AssignRoom", root.lookupType("wirelessmeshservice.AssignRoomCommand").create(command));
-}
-
-function getDevices(call, customerLocationId) {
-  return sendCommand(call, "GetDevices", root.lookupType("wirelessmeshservice.GetDevicesCommand").create(customerLocationId));
-}
-
+// Customer location attributes under test
 const customerLocationId = "customerLocationId1";
 const accessToken = "someaccesstoken";
 const deviceId = "deviceId1";
+const room = "living room";
+
+/**
+ * Helper functions
+ */
+
+function addCustomerLocation(call, customerLocationId, accessToken) {
+  return sendCommand(call, "AddCustomerLocation", root.lookupType("wirelessmeshservice.AddCustomerLocationCommand").create({
+      customerLocationId: customerLocationId,
+      accessToken: accessToken
+    }));
+}
+
+function removeCustomerLocation(call, customerLocationId) {
+  return sendCommand(call, "RemoveCustomerLocation", root.lookupType("wirelessmeshservice.RemoveCustomerLocationCommand").create({
+      customerLocationId: customerLocationId
+    }));
+}
+
+function activateDevice(call, customerLocationId, deviceId) {
+  return sendCommand(call, "ActivateDevice", root.lookupType("wirelessmeshservice.ActivateDeviceCommand").create({
+      customerLocationId: customerLocationId,
+      deviceId: deviceId
+    }));
+}
+
+function removeDevice(call, customerLocationId, deviceId) {
+  return sendCommand(call, "RemoveDevice", root.lookupType("wirelessmeshservice.RemoveDeviceCommand").create({
+      customerLocationId: customerLocationId,
+      deviceId: deviceId
+    }));
+}
+
+function assignRoom(call, customerLocationId, deviceId, room) {
+  return sendCommand(call, "AssignRoom", root.lookupType("wirelessmeshservice.AssignRoomCommand").create({
+      customerLocationId: customerLocationId,
+      deviceId: deviceId,
+      room: room
+    }));
+}
+
+function toggleNightlight(call, customerLocationId, deviceId) {
+  return sendCommand(call, "ToggleNightlight", root.lookupType("wirelessmeshservice.ToggleNightlightCommand").create({
+      customerLocationId: customerLocationId,
+      deviceId: deviceId
+    }));
+}
+
+function getCustomerLocation(call, customerLocationId) {
+  return sendCommand(call, "GetCustomerLocation", root.lookupType("wirelessmeshservice.GetCustomerLocationCommand").create({
+      customerLocationId: customerLocationId
+    }));
+}
 
 describe("customer location", () => {
 
@@ -184,7 +227,6 @@ describe("customer location", () => {
     const port = server.start({
       bindPort: 0
     });
-    console.log("descriptor", descriptor);
     discoveryClient = new descriptor.cloudstate.EntityDiscovery("127.0.0.1:" + port, grpc.credentials.createInsecure());
     eventSourcedClient = new descriptor.cloudstate.eventsourced.EventSourced("127.0.0.1:" + port, grpc.credentials.createInsecure());
   });
@@ -195,73 +237,130 @@ describe("customer location", () => {
 
   it("should create a customer location", () => {
     const call = callAndInit();
-    return addCustomerLocation(call, {
-      customerLocationId: customerLocationId,
-      accessToken: accessToken
-    })
+    return addCustomerLocation(call, customerLocationId, accessToken)
     .then(reply => {
       should.exist(reply.events);
       reply.events[0].type_url.should.equal("json.cloudstate.io/CustomerLocationAdded")
       reply.decodedEvents[0].customerLocationId.should.equal(customerLocationId);
       reply.decodedEvents[0].accessToken.should.equal(accessToken);
       should.not.exist(reply.snapshot);
-      call.end();
-    });
+
+      return getCustomerLocation(call, customerLocationId);
+      }).then(reply => {
+		    call.end();
+        reply.decodedPayload.added.should.equal(true);
+        reply.decodedPayload.removed.should.equal(false);
+        reply.decodedPayload.accessToken.should.equal(accessToken);
+		    reply.decodedPayload.devices.should.be.empty;
+      });
   });
 
-  it("should accept CustomerLocatedAdded event", () => {
+  it("should remove a customer location", () => {
     const call = callAndInit();
-    sendEvent(call, 1, {
-      type: "CustomerLocationAdded",
-      customerLocationId: customerLocationId,
-      accessToken: accessToken
-    });
+    return addCustomerLocation(call, customerLocationId, accessToken)
+    .then(reply => {
+      return removeCustomerLocation(call, customerLocationId)
+      }).then(reply => {
+        call.end();
+        should.exist(reply.events);
+        reply.events[0].type_url.should.equal("json.cloudstate.io/CustomerLocationRemoved")
+        reply.decodedEvents[0].customerLocationId.should.equal(customerLocationId);
+        should.not.exist(reply.snapshot);
+    });  
   });
 
   it("should activate a device", () => {
     const call = callAndInit();
-    return activateDevice(call, {
-      customerLocationId: customerLocationId,
-      deviceId: deviceId
-    })
-    .then(reply => {
-      should.exist(reply.events);
-      should.not.exist(reply.snapshot);
-      reply.events[0].type_url.should.equal("json.cloudstate.io/DeviceActivated")
-      reply.decodedEvents[0].customerLocationId.should.equal(customerLocationId);
-      reply.decodedEvents[0].deviceId.should.equal(deviceId);
-      call.end();
-    });
+    return addCustomerLocation(call, customerLocationId, accessToken)
+    .then(_ => {
+      return activateDevice(call, customerLocationId, deviceId)
+      }).then(reply => {
+        should.exist(reply.events);
+        reply.events[0].type_url.should.equal("json.cloudstate.io/DeviceActivated")
+        reply.decodedEvents[0].customerLocationId.should.equal(customerLocationId);
+        reply.decodedEvents[0].deviceId.should.equal(deviceId);
+        should.not.exist(reply.snapshot);
+        return getCustomerLocation(call, customerLocationId)
+        .then(reply => {
+          call.end();
+          reply.decodedPayload.devices.length.should.equal(1);
+          reply.decodedPayload.devices[0].customerLocationId.should.equal(customerLocationId);
+          reply.decodedPayload.devices[0].deviceId.should.equal(deviceId);
+          reply.decodedPayload.devices[0].activated.should.equal(true);
+          reply.decodedPayload.devices[0].room.should.equal("");
+          reply.decodedPayload.devices[0].nightlightOn.should.equal(false);
+        });
+    });  
   });
 
-  it("should get devices", () => {
+  it("should remove a device", () => {
     const call = callAndInit();
-    return getDevices(call, {
-      customerLocationId: customerLocationId
-    })
-    .then(reply => {
-      reply.decodedPayload.device.should.be.empty;
-      call.end();
-    });
+    return addCustomerLocation(call, customerLocationId, accessToken)
+    .then(_ => {
+      return activateDevice(call, customerLocationId, deviceId)
+      }).then(_ => {
+        return removeDevice(call, customerLocationId, deviceId)
+        .then(reply => {
+          should.exist(reply.events);
+          reply.events[0].type_url.should.equal("json.cloudstate.io/DeviceRemoved")
+          reply.decodedEvents[0].customerLocationId.should.equal(customerLocationId);
+          reply.decodedEvents[0].deviceId.should.equal(deviceId);
+          should.not.exist(reply.snapshot);
+          return getCustomerLocation(call, customerLocationId)
+          .then(reply => {
+            call.end();
+            reply.decodedPayload.devices.length.should.equal(0);
+          });
+        });
+    });  
   });
 
-  // it("should assign a room to a device", () => {
-  //   const call = callAndInit();
-  //   return assignRoom(call, {
-  //     customerLocationId: customerLocationId,
-  //     deviceId: deviceId,
-  //     room: "living room"
-  //   })
-  //   .then(reply => {
-  //     should.exist(reply.events);
-  //     should.not.exist(reply.snapshot);
-  //     reply.events[0].type_url.should.equal("json.cloudstate.io/RoomAssigned")
-  //     reply.decodedEvents[0].customerLocationId.should.equal(customerLocationId);
-  //     reply.decodedEvents[0].deviceId.should.equal(deviceId);
-  //     reply.decodedEvents[0].room.should.equal("living room");
-  //     call.end();
-  //   });
-  // });
+  it("should assign a room", () => {
+    const call = callAndInit();
+    return addCustomerLocation(call, customerLocationId, accessToken)
+    .then(_ => {
+      return activateDevice(call, customerLocationId, deviceId)
+      }).then(_ => {
+        return assignRoom(call, customerLocationId, deviceId, room)
+        .then(reply => {
+          should.exist(reply.events);
+          reply.events[0].type_url.should.equal("json.cloudstate.io/RoomAssigned")
+          reply.decodedEvents[0].customerLocationId.should.equal(customerLocationId);
+          reply.decodedEvents[0].deviceId.should.equal(deviceId);
+          reply.decodedEvents[0].room.should.equal(room);
+          should.not.exist(reply.snapshot);
+          return getCustomerLocation(call, customerLocationId)
+          .then(reply => {
+            call.end();
+            reply.decodedPayload.devices.length.should.equal(1);
+            reply.decodedPayload.devices[0].room.should.equal(room);
+          });
+        });
+    });  
+  });
 
+  it("should toggle the nightlight", () => {
+    const call = callAndInit();
+    return addCustomerLocation(call, customerLocationId, accessToken)
+    .then(_ => {
+      return activateDevice(call, customerLocationId, deviceId)
+      }).then(_ => {
+        return toggleNightlight(call, customerLocationId, deviceId)
+        .then(reply => {
+          should.exist(reply.events);
+          reply.events[0].type_url.should.equal("json.cloudstate.io/NightlightToggled")
+          reply.decodedEvents[0].customerLocationId.should.equal(customerLocationId);
+          reply.decodedEvents[0].deviceId.should.equal(deviceId);
+          reply.decodedEvents[0].nightlightOn.should.equal(true);
+          should.not.exist(reply.snapshot);
+          return getCustomerLocation(call, customerLocationId)
+          .then(reply => {
+            call.end();
+            reply.decodedPayload.devices.length.should.equal(1);
+            reply.decodedPayload.devices[0].nightlightOn.should.equal(true);
+          });
+        });
+    });  
+  });
 
 });
