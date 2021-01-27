@@ -22,6 +22,7 @@ const accessToken = "someaccesstoken";
 const deviceId = "deviceId1";
 const room = "living room";
 
+// We mock the context to be passed into our function.
 function mockContext() {
     return {
         failures: [],
@@ -39,6 +40,7 @@ function mockContext() {
     };
 }
 
+// The starting state of the entity.
 function defaultState() {
   return {
     added: false,
@@ -87,6 +89,7 @@ describe("customer location", () => {
       state,
       context);
 
+    // Send the event and check state is updated.
     entity.customerLocationRemoved(context.events[0], state);
     context.failures.length.should.equal(0);
     state.removed.should.equal(true);
@@ -122,6 +125,7 @@ describe("customer location", () => {
     context.events[0].customerLocationId.should.equal(customerLocationId);
     context.events[0].deviceId.should.equal(deviceId);
 
+    // Send the event and check state is updated.
     entity.deviceActivated(context.events[0], state);
     state.devices.length.should.equal(1);
     state.devices[0].customerLocationId.should.equal(customerLocationId);
@@ -156,6 +160,7 @@ describe("customer location", () => {
     context.events[0].customerLocationId.should.equal(customerLocationId);
     context.events[0].deviceId.should.equal(deviceId);
 
+    // Send the event and check state is updated.
     entity.deviceRemoved(context.events[0], state)
     state.devices.length.should.equal(0);
   });
@@ -187,6 +192,7 @@ describe("customer location", () => {
     context.events[0].deviceId.should.equal(deviceId);
     context.events[0].room.should.equal(room);
 
+    // Send the event and check state is updated.
     entity.roomAssigned(context.events[0], state)
     state.devices.length.should.equal(1);
     state.devices[0].room.should.equal(room);
@@ -219,6 +225,7 @@ describe("customer location", () => {
     context.events[0].deviceId.should.equal(deviceId);
     context.events[0].nightlightOn.should.equal(true);
 
+    // Send the event and check state is updated.
     entity.nightlightToggled(context.events[0], state)
     state.devices.length.should.equal(1);
     state.devices[0].nightlightOn.should.equal(true);
