@@ -40,7 +40,6 @@ const root = protobufHelper.loadSync([
 ], allIncludeDirs);
 const anySupport = new AnySupport(root)
 
-
 // Customer location attributes under test
 const customerLocationId = "customerLocationId1";
 const accessToken = "someaccesstoken";
@@ -48,7 +47,20 @@ const deviceId = "deviceId1";
 const room = "living room";
 const {addCustomerLocation} = require("../wirelessmesh");
 
-const customerLocation = require('../wirelessmesh');
+//const customerLocation = require('../wirelessmesh');
+
+function mockContext() {
+    return {
+        failures: [],
+        events: [],
+        fail(failure) {
+            this.failures.push(failure);
+        },
+        emit(event) {
+            this.events.push(event);
+        },
+    };
+}
 
 describe("customer location", () => {
 
@@ -61,28 +73,16 @@ describe("customer location", () => {
       devices: []
     };
 
-    function mockContext() {
-      return {
-          failures: [],
-          events: [],
-          fail(failure) {
-              this.failures.push(failure);
-          },
-          emit(event) {
-              this.events.push(event);
-          },
-      };
-    }
+    const context = mockContext();
 
     const response = addCustomerLocation(
         {customerLocationId: customerLocationId, accessToken: accessToken},
         entityState,
-        mockContext());
+        context);
 
-    // const response = customerLocation.getCustomerLocation(
-    //     {customerLocationId: customerLocationId, accessToken: accessToken}
-    //     ,entityState)
-
-    console.log(JSON.stringify(response));
+    context.events.length.should.equal(1);
+    context.events[0].type.should.equal("CustomerLocationAdded")
+    context.events[0].customerLocationId.should.equal(customerLocationId);
+    context.events[0].accessToken.should.equal(accessToken);
   });
 });

@@ -370,15 +370,7 @@ function nightlightToggled(nightlightToggled, entityState) {
  * @param ctx the application context
  * @return Empty (unused)
  */
-// function getCustomerLocation(getCustomerLocationCommand, entityState, ctx) {
-//   if (entityState.removed || !entityState.added) {
-//     ctx.fail("customerLocation does not exist");
-//   }
-//   else {
-//     return entityState;
-//   }
-// }
-const getCustomerLocation = (getCustomerLocationCommand, entityState, ctx) => {
+function getCustomerLocation(getCustomerLocationCommand, entityState, ctx) {
   if (entityState.removed || !entityState.added) {
     ctx.fail("customerLocation does not exist");
   }
@@ -386,9 +378,6 @@ const getCustomerLocation = (getCustomerLocationCommand, entityState, ctx) => {
     return entityState;
   }
 }
-
-// Export the entity
-// module.exports = entity;
 
 module.exports = {
   entity,
