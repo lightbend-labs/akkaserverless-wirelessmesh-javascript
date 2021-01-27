@@ -80,7 +80,7 @@ entity.setBehavior(entityState => {
  * @param ctx the application context
  * @return Empty (unused)
  */
-function addCustomerLocation(addCustomerLocationCommand, entityState, ctx) {
+entity.addCustomerLocation = function(addCustomerLocationCommand, entityState, ctx) {
   // Validate that the the command has not already been handled, i.e. not yet added.
   if (entityState.added) {
     ctx.fail("Customer location already added");
@@ -105,7 +105,7 @@ function addCustomerLocation(addCustomerLocationCommand, entityState, ctx) {
  * @param customerLocationAdded the event previously emitted in the command handler, now safely stored
  * @param entityState the current state
  */
-function customerLocationAdded(customerLocationAdded, entityState) {
+entity.customerLocationAdded = function(customerLocationAdded, entityState) {
   entityState.added = true;
   entityState.accessToken = customerLocationAdded.accessToken;
 
@@ -120,7 +120,7 @@ function customerLocationAdded(customerLocationAdded, entityState) {
  * @param ctx the application context
  * @return Empty (unused)
  */
-function removeCustomerLocation(removeCustomerLocationCommand, entityState, ctx) {
+entity.removeCustomerLocation = function(removeCustomerLocationCommand, entityState, ctx) {
   if (!entityState.added) {
     ctx.fail("Customer location does not exist");
   }
@@ -146,7 +146,7 @@ function removeCustomerLocation(removeCustomerLocationCommand, entityState, ctx)
  * @param customerLocationRemoved the event previously emitted in the command handler, now safely stored
  * @param entityState the current state to be updated
  */
-function customerLocationRemoved(customerLocationRemoved, entityState) {
+entity.customerLocationRemoved = function(customerLocationRemoved, entityState) {
   entityState.removed = true;
 
   // Return the new state.
@@ -160,7 +160,7 @@ function customerLocationRemoved(customerLocationRemoved, entityState) {
  * @param ctx the application context
  * @return Empty (unused)
  */
-function activateDevice(activateDeviceCommand, entityState, ctx) {
+entity.activateDevice = function(activateDeviceCommand, entityState, ctx) {
   if (entityState.removed) {
     ctx.fail("customerLocation does not exist");
   }
@@ -193,7 +193,7 @@ function activateDevice(activateDeviceCommand, entityState, ctx) {
  * @param deviceActivated the event previously emitted in the command handler, now safely stored
  * @param entityState the current state to be updated
  */
-function deviceActivated(deviceActivated, entityState) {
+entity.deviceActivated = function(deviceActivated, entityState) {
   const device = {
     deviceId: deviceActivated.deviceId,
     customerLocationId: deviceActivated.customerLocationId,
@@ -217,7 +217,7 @@ function deviceActivated(deviceActivated, entityState) {
  * @param ctx the application context
  * @return Empty (unused)
  */
-function removeDevice(removeDeviceCommand, entityState, ctx) {
+entity.removeDevice = function(removeDeviceCommand, entityState, ctx) {
   if (!entityState.added || entityState.removed) {
     ctx.fail("customerLocation does not exist");
   }
@@ -250,7 +250,7 @@ function removeDevice(removeDeviceCommand, entityState, ctx) {
  * @param deviceRemoved the event previously emitted in the command handler, now safely stored
  * @param entityState the current state to be updated
  */
-function deviceRemoved(deviceRemoved, entityState) { 
+entity.deviceRemoved = function(deviceRemoved, entityState) {
   entityState.devices = entityState.devices.filter(device => {
     return device.deviceId !== deviceRemoved.deviceId;
   })
@@ -266,7 +266,7 @@ function deviceRemoved(deviceRemoved, entityState) {
  * @param ctx the application context
  * @return Empty (unused)
  */
-function assignRoom(assignRoomCommand, entityState, ctx) {
+entity.assignRoom =function(assignRoomCommand, entityState, ctx) {
   if (!entityState.added || entityState.removed) {
     ctx.fail("customerLocation does not exist");
   }
@@ -300,7 +300,7 @@ function assignRoom(assignRoomCommand, entityState, ctx) {
  * @param roomAssigned the event previously emitted in the command handler, now safely stored
  * @param entityState the current state to be updated
  */
-function roomAssigned(roomAssigned, entityState) {
+entity.roomAssigned = function(roomAssigned, entityState) {
   const existing = entityState.devices.find(device => {
     return device.deviceId === roomAssigned.deviceId;
   });
@@ -318,7 +318,7 @@ function roomAssigned(roomAssigned, entityState) {
  * @param ctx the application context
  * @return Empty (unused)
  */
-function toggleNightlight(toggleNightlightCommand, entityState, ctx) {
+entity.toggleNightlight = function(toggleNightlightCommand, entityState, ctx) {
   if (!entityState.added || entityState.removed) {
     ctx.fail("customerLocation does not exist");
   }
@@ -352,7 +352,7 @@ function toggleNightlight(toggleNightlightCommand, entityState, ctx) {
  * @param nightlightToggled the event previously emitted in the command handler, now safely stored
  * @param entityState the current state to be updated
  */
-function nightlightToggled(nightlightToggled, entityState) {
+entity.nightlightToggled = function(nightlightToggled, entityState) {
   const existing = entityState.devices.find(device => {
     return device.deviceId === nightlightToggled.deviceId;
   });
@@ -370,7 +370,7 @@ function nightlightToggled(nightlightToggled, entityState) {
  * @param ctx the application context
  * @return Empty (unused)
  */
-function getCustomerLocation(getCustomerLocationCommand, entityState, ctx) {
+entity.getCustomerLocation = function(getCustomerLocationCommand, entityState, ctx) {
   if (entityState.removed || !entityState.added) {
     ctx.fail("customerLocation does not exist");
   }
