@@ -19,6 +19,8 @@ const {PubSub} = require('@google-cloud/pubsub');
 const grpc = require('grpc');
 const pubsub = new PubSub({grpc});
 
+console.log(process.env)
+
 const entity = new EventSourced(
   ["wirelessmeshservice.proto", "wirelessmeshdomain.proto"],
   "wirelessmeshservice.WirelessmeshService",
@@ -77,6 +79,25 @@ entity.setBehavior(entityState => {
 });
 
 /**
+ * Publish event to google pubsub.
+ * @param event
+ * @returns {Promise<void>}
+ */
+async function publish(event) {
+  const pubSubClient = new PubSub();
+  const dataBuffer = Buffer.from(JSON.stringify(event));
+  const topicName = "wirelessmesh";
+
+  try {
+    const messageId = await pubSubClient.topic(topicName).publish(dataBuffer);
+    console.log(`Message ${messageId} published.`);
+  } catch (error) {
+    console.error(`Received error while publishing: ${error.message}`);
+    process.exitCode = 1;
+  }
+}
+
+/**
  * This is the command handler for adding a customer location as defined in protobuf
  * @param addCustomerLocationCommand the command message from protobuf
  * @param entityState the current state
@@ -99,25 +120,6 @@ entity.addCustomerLocation = function(addCustomerLocationCommand, entityState, c
     ctx.emit(customerLocationAdded);
     publish(customerLocationAdded);
     return {};
-  }
-}
-
-/**
- * Publish event to google pubsub.
- * @param event
- * @returns {Promise<void>}
- */
-async function publish(event) {
-  const pubSubClient = new PubSub();
-  const dataBuffer = Buffer.from(JSON.stringify(event));
-  const topicName = "wirelessmesh";
-
-  try {
-    const messageId = await pubSubClient.topic(topicName).publish(dataBuffer);
-    console.log(`Message ${messageId} published.`);
-  } catch (error) {
-    console.error(`Received error while publishing: ${error.message}`);
-    process.exitCode = 1;
   }
 }
 

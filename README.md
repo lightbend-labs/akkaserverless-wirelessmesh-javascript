@@ -5,6 +5,7 @@ A JavaScript-based example app for [Akka Serverless](https://developer.lightbend
 Features include:
 
 * Customer locations with wireless mesh devices
+* Connectivity to Google Cloud Pubsub
 
 ## What is this example?
 
@@ -19,8 +20,15 @@ To build and deploy this example application, you'll need to have:
 * An [Akka Serverless account](https://docs.cloudstate.com/getting-started/lightbend-account.html)
 * Node.js v12 or higher installed
 * The Docker CLI installed
+* A [service account](https://cloud.google.com/docs/authentication/production) that can connect to Google Cloud Pubsub
 
 ## Build, Deploy, and Test
+
+### Prepare your Google Cloud Pubsub
+
+To connect to Google Cloud Pubsub, the easiest method is authenticate using a service account. To create your [service account](https://cloud.google.com/docs/authentication/production#cloud-console). After creating your service account, you need to download the service account key as a JSON file called `mycreds.json`. Put this file in the folder containing your javascript code, in the case of this sample, the wirelessmesh folder.
+
+Next, you'll need to build a base image that contains the `mycreds.json` file and sets the environment variable `GOOGLE_APPLICATION_CREDENTIALS` to the service account key. You can build the docker image with by running:
 
 ### Build your containers
 
