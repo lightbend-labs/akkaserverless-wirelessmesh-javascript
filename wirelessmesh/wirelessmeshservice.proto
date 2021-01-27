@@ -16,7 +16,7 @@ package wirelessmeshservice;
 
 message AddCustomerLocationCommand {
     string customerLocationId = 1 [(.cloudstate.entity_key) = true]; // We must specify that this is the unique key for the entity.
-    string accessToken = 2;
+    string accessTokens = 2;
 }
 
 message RemoveCustomerLocationCommand {
