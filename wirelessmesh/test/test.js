@@ -13,13 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-/**
- * THIS SECTION SHOULD OPTIMALLY BE BROKEN OUT INTO A TESTKIT FOR REUSE.
- */
-
-import {addCustomerLocation} from '../wirelessmesh.js';
-
 const path = require("path");
 const should = require("chai").should();
 const grpc = require("grpc");
@@ -53,6 +46,9 @@ const customerLocationId = "customerLocationId1";
 const accessToken = "someaccesstoken";
 const deviceId = "deviceId1";
 const room = "living room";
+const {addCustomerLocation} = require("../wirelessmesh");
+
+const customerLocation = require('../wirelessmesh');
 
 describe("customer location", () => {
 
@@ -65,12 +61,28 @@ describe("customer location", () => {
       devices: []
     };
 
-    const context = jest.fn(event => console.log(event));
+    function mockContext() {
+      return {
+          failures: [],
+          events: [],
+          fail(failure) {
+              this.failures.push(failure);
+          },
+          emit(event) {
+              this.events.push(event);
+          },
+      };
+    }
+
     const response = addCustomerLocation(
         {customerLocationId: customerLocationId, accessToken: accessToken},
         entityState,
-        context);
+        mockContext());
 
-    console.log(response);
+    // const response = customerLocation.getCustomerLocation(
+    //     {customerLocationId: customerLocationId, accessToken: accessToken}
+    //     ,entityState)
+
+    console.log(JSON.stringify(response));
   });
 });
