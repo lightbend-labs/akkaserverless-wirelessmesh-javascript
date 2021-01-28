@@ -36,7 +36,7 @@ examples to set local variables for testing (macos):
 * export GOOGLE_APPLICATION_CREDENTIALS='/Users/memyselfandI/Downloads/mycreds.json'
 * export PUBLISH_EVENTS='ON'
 
-Be sure to set those 3 during your akkaserverless deploy as well.
+Be sure to set those 2 during your akkaserverless deploy as well.
 
 ### Build your containers
 
