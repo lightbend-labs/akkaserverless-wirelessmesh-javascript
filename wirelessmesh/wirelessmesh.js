@@ -15,6 +15,7 @@
  */
 
 const EventSourced = require("cloudstate").EventSourced;
+const eventPublisher = require("./eventPublisher.js");
 
 const entity = new EventSourced(
   ["wirelessmeshservice.proto", "wirelessmeshdomain.proto"],
@@ -94,6 +95,7 @@ entity.addCustomerLocation = function(addCustomerLocationCommand, entityState, c
     };
     // Emit the event.
     ctx.emit(customerLocationAdded);
+    eventPublisher.publish(customerLocationAdded);
     return {};
   }
 }
@@ -135,6 +137,7 @@ entity.removeCustomerLocation = function(removeCustomerLocationCommand, entitySt
     };
     // Emit the event.
     ctx.emit(customerLocationRemoved);
+    eventPublisher.publish(customerLocationRemoved);
     return {};
   }
 }
@@ -181,6 +184,7 @@ entity.activateDevice = function(activateDeviceCommand, entityState, ctx) {
       };
       // Emit the event.
       ctx.emit(deviceActivated);
+      eventPublisher.publish(deviceActivated);
       return {};
     }
   }
@@ -203,8 +207,6 @@ entity.deviceActivated = function(deviceActivated, entityState) {
   };
 
   entityState.devices.push(device);
-
-  //console.log("deviceActivated location " + deviceActivated.customerLocationId + "->" + JSON.stringify(entityState.devices));
 
   // Return the new state.
   return entityState;
@@ -238,6 +240,7 @@ entity.removeDevice = function(removeDeviceCommand, entityState, ctx) {
       };
       // Emit the event.
       ctx.emit(deviceRemoved);
+      eventPublisher.publish(deviceRemoved);
       return {};
     }
   }
@@ -288,6 +291,7 @@ entity.assignRoom =function(assignRoomCommand, entityState, ctx) {
       };
       // Emit the event.
       ctx.emit(roomAssigned);
+      eventPublisher.publish(roomAssigned);
       return {};
     }
   }
@@ -340,6 +344,7 @@ entity.toggleNightlight = function(toggleNightlightCommand, entityState, ctx) {
 
       // Emit the event.
       ctx.emit(nightlightToggled);
+      eventPublisher.publish(nightlightToggled);
       return {};
     }
   }

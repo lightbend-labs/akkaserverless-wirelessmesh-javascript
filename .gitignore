@@ -2,3 +2,4 @@ node_modules/
 user-function.desc
 .DS_Store
 .idea/
+mycreds.json
