@@ -30,6 +30,7 @@ To connect to Google Cloud Pubsub, the easiest method is authenticate using a se
 
 Next, you'll need to build a base image that contains the `mycreds.json` file and sets the environment variable `GOOGLE_APPLICATION_CREDENTIALS` to the service account key. You can build the docker image with by running:
 
+To publish events to google pubsub locally, use the 'export PUBLISH_EVENTS=ON' environment variable. Make sure to add this environment variable when you deply to akka serverless if you want to publish to google.
 ### Build your containers
 
 To build your own container, execute the below commands:

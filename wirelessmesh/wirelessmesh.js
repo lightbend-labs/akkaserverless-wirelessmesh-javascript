@@ -15,11 +15,7 @@
  */
 
 const EventSourced = require("cloudstate").EventSourced;
-const {PubSub} = require('@google-cloud/pubsub');
-const grpc = require('grpc');
-const pubsub = new PubSub({grpc});
-
-console.log(process.env)
+const eventPublisher = require("./eventPublisher.js")
 
 const entity = new EventSourced(
   ["wirelessmeshservice.proto", "wirelessmeshdomain.proto"],
@@ -79,25 +75,6 @@ entity.setBehavior(entityState => {
 });
 
 /**
- * Publish event to google pubsub.
- * @param event
- * @returns {Promise<void>}
- */
-async function publish(event) {
-  const pubSubClient = new PubSub();
-  const dataBuffer = Buffer.from(JSON.stringify(event));
-  const topicName = "wirelessmesh";
-
-  try {
-    const messageId = await pubSubClient.topic(topicName).publish(dataBuffer);
-    console.log(`Message ${messageId} published.`);
-  } catch (error) {
-    console.error(`Received error while publishing: ${error.message}`);
-    process.exitCode = 1;
-  }
-}
-
-/**
  * This is the command handler for adding a customer location as defined in protobuf
  * @param addCustomerLocationCommand the command message from protobuf
  * @param entityState the current state
@@ -118,15 +95,10 @@ entity.addCustomerLocation = function(addCustomerLocationCommand, entityState, c
     };
     // Emit the event.
     ctx.emit(customerLocationAdded);
-    publish(customerLocationAdded);
+    eventPublisher.publish(customerLocationAdded);
     return {};
   }
 }
-
-process.on('unhandledRejection', err => {
-  console.error(err.message);
-  process.exitCode = 1;
-});
 
 /**
  * This is the event handler for adding a customer location. It is here we update current state due to
@@ -165,7 +137,7 @@ entity.removeCustomerLocation = function(removeCustomerLocationCommand, entitySt
     };
     // Emit the event.
     ctx.emit(customerLocationRemoved);
-    publish(customerLocationRemoved);
+    eventPublisher.publish(customerLocationRemoved);
     return {};
   }
 }
@@ -212,7 +184,7 @@ entity.activateDevice = function(activateDeviceCommand, entityState, ctx) {
       };
       // Emit the event.
       ctx.emit(deviceActivated);
-      publish(deviceActivated);
+      eventPublisher.publish(deviceActivated);
       return {};
     }
   }
@@ -235,8 +207,6 @@ entity.deviceActivated = function(deviceActivated, entityState) {
   };
 
   entityState.devices.push(device);
-
-  //console.log("deviceActivated location " + deviceActivated.customerLocationId + "->" + JSON.stringify(entityState.devices));
 
   // Return the new state.
   return entityState;
@@ -270,7 +240,7 @@ entity.removeDevice = function(removeDeviceCommand, entityState, ctx) {
       };
       // Emit the event.
       ctx.emit(deviceRemoved);
-      publish(deviceRemoved);
+      eventPublisher.publish(deviceRemoved);
       return {};
     }
   }
@@ -321,7 +291,7 @@ entity.assignRoom =function(assignRoomCommand, entityState, ctx) {
       };
       // Emit the event.
       ctx.emit(roomAssigned);
-      publish(roomAssigned);
+      eventPublisher.publish(roomAssigned);
       return {};
     }
   }
@@ -374,7 +344,7 @@ entity.toggleNightlight = function(toggleNightlightCommand, entityState, ctx) {
 
       // Emit the event.
       ctx.emit(nightlightToggled);
-      publish(nightlightToggled);
+      eventPublisher.publish(nightlightToggled);
       return {};
     }
   }
