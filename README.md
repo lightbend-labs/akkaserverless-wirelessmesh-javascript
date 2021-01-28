@@ -38,6 +38,14 @@ examples to set local variables for testing (macos):
 
 Be sure to set those 2 during your akkaserverless deploy as well.
 
+### LIFX integration for toggling nightlight
+
+If you have an LIFX bulb and would like it to stand in for a wirelessmesh device and have it light on/off when you toggle the device nightlight, you simply have to:
+* Have an operational bulb
+* When you create your customer location, be sure to set the access token to the authorizaton token you requested with LIFX.
+* When you activate the device in this app, make sure it has the same device id as your bulb.
+* More information [here][https://api.developer.lifx.com]
+
 ### Build your containers
 
 To build your own container, execute the below commands:

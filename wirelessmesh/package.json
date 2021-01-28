@@ -23,6 +23,7 @@
     "cloudstate": "0.0.3",
     "google-protobuf": "^3.14.0",
     "grpc": "^1.24.4",
+    "node-fetch": "^2.6.1",
     "test": "^0.6.0"
   },
   "devDependencies": {

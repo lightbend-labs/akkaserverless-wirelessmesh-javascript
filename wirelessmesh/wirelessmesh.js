@@ -16,6 +16,7 @@
 
 const EventSourced = require("cloudstate").EventSourced;
 const eventPublisher = require("./eventPublisher.js");
+const deviceClient = require("./deviceClient.js");
 
 const entity = new EventSourced(
   ["wirelessmeshservice.proto", "wirelessmeshdomain.proto"],
@@ -345,6 +346,7 @@ entity.toggleNightlight = function(toggleNightlightCommand, entityState, ctx) {
       // Emit the event.
       ctx.emit(nightlightToggled);
       eventPublisher.publish(nightlightToggled);
+      deviceClient.toggleNightlight(entityState.accessToken, toggleNightlightCommand.deviceId);
       return {};
     }
   }
