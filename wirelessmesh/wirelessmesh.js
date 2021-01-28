@@ -15,7 +15,7 @@
  */
 
 const EventSourced = require("cloudstate").EventSourced;
-const eventPublisher = require("./eventPublisher.js")
+const eventPublisher = require("./eventPublisher.js");
 
 const entity = new EventSourced(
   ["wirelessmeshservice.proto", "wirelessmeshdomain.proto"],
