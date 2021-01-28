@@ -19,13 +19,7 @@ const {PubSub} = require('@google-cloud/pubsub');
 function eventPublisher() {
 
   // Check if publishing is on or off.
-  const publishOnEnv = process.env.PUBLISH_EVENTS
-  let publishOn = false;
-  if (publishOnEnv) {
-    if (publishOnEnv == "ON") {
-      publishOn = true;
-    }
-  }
+  let publishOn = process.env.PUBLISH_EVENTS && process.env.PUBLISH_EVENTS === "ON"
 
   return {
     /**
