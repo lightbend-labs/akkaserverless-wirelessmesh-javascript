@@ -21,7 +21,7 @@ const publishingModel = new Action(
   "publishing.PublishingService"
 );
 
-deviceControlModel.commandHandlers = {
+publishingModel.commandHandlers = {
   PublishCustomerLocationAdded: publishCustomerLocationAdded
 };
 
