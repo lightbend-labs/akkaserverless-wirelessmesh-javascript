@@ -13,6 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import customerlocationentity from "./customerlocationentity.js";
+const View = require("@lightbend/akkaserverless-javascript-sdk").View;
 
-customerlocationentity.start();
+const entity = new View(
+  ["customerlocationview.proto"],
+  "customerlocationview.CustomerLocationByEmailService",
+  {
+    viewId: "customer-location-view"
+  }
+);
+
+view.setUpdateHandlers({
+    "UpdateCustomerLocation": updateCustomerLocation
+});
+
+function updateUser(customerLocationAdded, previousViewState, ctx) {
+    return {
+        "customerLocationId": customerLocationAdded.customerLocationId,
+        "email": customerLocationAdded.email
+    };
+}
+
+module.exports = view;

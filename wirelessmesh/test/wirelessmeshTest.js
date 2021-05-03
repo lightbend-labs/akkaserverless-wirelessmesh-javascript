@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-const should = require("chai").should();
-const entity = require('../wirelessmesh');
+
+import { should } from 'chai';
+import customerlocationentity from "../src/customerlocationentity.js";
 
 // Customer location attributes under test
 const customerLocationId = "customerLocationId1";
@@ -55,8 +56,9 @@ describe("customer location", () => {
   it("should create a customer location", () => {
     const state = defaultState();
     const context = mockContext();
+    console.log(context);
 
-    entity.addCustomerLocation(
+    customerlocationentity.addCustomerLocation(
     {customerLocationId: customerLocationId, accessToken: accessToken},
       state,
     context);
@@ -68,7 +70,7 @@ describe("customer location", () => {
     context.events[0].accessToken.should.equal(accessToken);
 
     // Send the event and check state is updated.
-    entity.customerLocationAdded(context.events[0], state);
+    customerlocationentity.customerLocationAdded(context.events[0], state);
     state.added.should.equal(true);
     state.removed.should.equal(false);
     state.accessToken.should.equal(accessToken);

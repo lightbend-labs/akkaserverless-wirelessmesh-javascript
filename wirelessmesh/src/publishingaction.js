@@ -13,6 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import customerlocationentity from "./customerlocationentity.js";
 
-customerlocationentity.start();
+const Action = require("@lightbend/akkaserverless-javascript-sdk").Action
+
+const publishingModel = new Action(
+  "proto/publishing.proto",
+  "publishing.PublishingService"
+);
+
+deviceControlModel.commandHandlers = {
+  PublishCustomerLocationAdded: publishCustomerLocationAdded
+};
+
+function publishCustomerLocationAdded(customerLocationAdded, context) {
+  return customerLocationAdded;
+}
+
+module.exports = publishingModel;

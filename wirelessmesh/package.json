@@ -9,7 +9,6 @@
     "email": "sean.walsh@lightbend.com"
   },
   "type": "module",
-  "engineStrict": false,
   "engines": {
     "node": ">=12.0.0",
     "npm": ">=6.0.0"

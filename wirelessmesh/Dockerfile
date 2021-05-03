@@ -2,7 +2,9 @@
 # See https://docs.docker.com/develop/develop-images/multistage-build/
 
 # Stage 1: Downloading dependencies and building the application
-FROM node:12.18.0-buster AS builder
+FROM node:15.10.0-buster-slim AS builder
+
+RUN apt-get update && apt-get install -y python3 make g++ && rm -rf /var/lib/apt/lists/*
 
 # Set the working directory
 WORKDIR /home/node
@@ -10,9 +12,6 @@ WORKDIR /home/node
 # Install app dependencies
 COPY package*.json ./
 RUN npm ci
-
-ADD mycreds.json mycreds.json
-ENV GOOGLE_APPLICATION_CREDENTIALS=./mycreds.json
 
 # Copy sources and build the app
 COPY . .
@@ -23,7 +22,7 @@ RUN npm run build
 RUN npm prune --production
 
 # Stage 2: Building the production image
-FROM node:12.18.0-buster-slim
+FROM node:15.10.0-buster-slim
 
 # Set the working directory
 WORKDIR /home/node
@@ -33,11 +32,11 @@ COPY --from=builder --chown=node /home/node/node_modules node_modules/
 
 # Copy the app
 COPY --from=builder --chown=node \
-  /home/node/package*.json \
-  /home/node/*.js \
-  /home/node/*.proto \
-  /home/node/user-function.desc \
-  ./
+    /home/node/package*.json \
+    /home/node/*.js \
+    /home/node/proto \
+    /home/node/user-function.desc \
+    ./
 
 # Run the app as an unprivileged user for extra security.
 USER node

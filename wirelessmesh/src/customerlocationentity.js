@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 import { EventSourcedEntity } from "@lightbend/akkaserverless-javascript-sdk";
 
 const entity = new EventSourcedEntity(
@@ -20,7 +21,8 @@ const entity = new EventSourcedEntity(
     "domain/wirelessmeshdomain.proto",
     "wirelessmesh.proto"
   ],
-  "wirelessmeshservice.customerlocationentity",
+  "wirelessmesh.WirelessMeshService",
+  "wirelessmeshservice",
   {
     persistenceId: "customer-location-entity",
     includeDirs: ["./proto"],
