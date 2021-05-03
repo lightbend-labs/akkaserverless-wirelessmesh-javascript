@@ -3,40 +3,40 @@
   "name": "akkaserverless-wirelessmesh-javascript",
   "version": "0.1.0",
   "description": "Sample Akka Serverless event sourced IoT for wirelessmesh devices in the home",
-  "engineStrict": true,
-  "engines": {
-    "node": ">=12.0 <15.0"
-  },
   "license": "Apache-2.0",
   "author": {
     "name": "Sean Walsh",
     "email": "sean.walsh@lightbend.com"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/lightbend-labs/akkaserverless-wirelessmesh-javascript",
-    "directory": "wirelessmesh"
+  "type": "module",
+  "engineStrict": false,
+  "engines": {
+    "node": ">=12.0.0",
+    "npm": ">=6.0.0"
   },
   "dependencies": {
-    "@google-cloud/pubsub": "^2.8.0",
-    "@grpc/proto-loader": "^0.5.5",
-    "cloudstate": "0.0.3",
-    "google-protobuf": "^3.14.0",
-    "grpc": "^1.24.4",
-    "node-fetch": "^2.6.1",
-    "test": "^0.6.0"
+    "@grpc/proto-loader": "^0.1.0",
+    "@lightbend/akkaserverless-javascript-sdk": "0.7.0-beta.3",
+    "google-protobuf": "^3.0.0",
+    "grpc": "^1.20.2"
   },
   "devDependencies": {
-    "chai": "^4.2.0",
-    "mocha": "^8.2.1"
+    "@lightbend/akkasls-scripts": "^0.21.0",
+    "chai": "^4.3.3",
+    "mocha": "^8.3.1"
+  },
+  "config": {
+    "dockerImage": "t3chi3/akkaserverless-wirelessmesh-javascript",
+    "sourceDir": "./src",
+    "testSourceDir": "./test",
+    "protoSourceDir": "./proto",
+    "generatedSourceDir": "./lib/generated"
   },
   "scripts": {
-    "test": "mocha",
-    "pretest": "compile-descriptor ./wirelessmeshservice.proto",
-    "build": "compile-descriptor ./wirelessmeshservice.proto",
-    "start": "node index.js",
-    "dockerbuild": "docker build -f ./Dockerfile -t ${DOCKER_REGISTRY:-docker.io}/${DOCKER_USER:}/akkaserverless-wirelessmesh-javascript:latest ../..",
-    "dockerpush": "docker push ${DOCKER_REGISTRY:-docker.io}/${DOCKER_USER:}/akkaserverless-wirelessmesh-javascript:latest",
-    "dockerbuildpush": "npm run dockerbuild && npm run dockerpush"
+    "start": "node src/index.js",
+    "test": "mocha ./test",
+    "build": "akkasls-scripts build",
+    "package": "akkasls-scripts package",
+    "deploy": "akkasls-scripts deploy"
   }
 }

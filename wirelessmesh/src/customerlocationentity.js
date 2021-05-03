@@ -13,19 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { EventSourcedEntity } from "@lightbend/akkaserverless-javascript-sdk";
 
-const EventSourced = require("cloudstate").EventSourced;
-const eventPublisher = require("./eventPublisher.js");
-const deviceClient = require("./deviceClient.js");
-
-const entity = new EventSourced(
-  ["wirelessmeshservice.proto", "wirelessmeshdomain.proto"],
-  "wirelessmeshservice.WirelessmeshService",
+const entity = new EventSourcedEntity(
+  [
+    "domain/wirelessmeshdomain.proto",
+    "wirelessmesh.proto"
+  ],
+  "wirelessmeshservice.customerlocationentity",
   {
-    persistenceId: "customer-location",
-    snapshotEvery: 50,
-    includeDirs: ["./"],
-    serializeFallbackToJson: true // Enables JSON support for persistence
+    persistenceId: "customer-location-entity",
+    includeDirs: ["./proto"],
+    serializeFallbackToJson: true
   }
 );
 
@@ -88,7 +87,7 @@ entity.addCustomerLocation = function(addCustomerLocationCommand, entityState, c
     ctx.fail("Customer location already added");
   }
   else {
-    // Create the event.    
+    // Create the event.
     const customerLocationAdded = {
       type: "CustomerLocationAdded",
       customerLocationId: addCustomerLocationCommand.customerLocationId,
@@ -96,7 +95,6 @@ entity.addCustomerLocation = function(addCustomerLocationCommand, entityState, c
     };
     // Emit the event.
     ctx.emit(customerLocationAdded);
-    eventPublisher.publish(customerLocationAdded);
     return {};
   }
 }
@@ -131,14 +129,13 @@ entity.removeCustomerLocation = function(removeCustomerLocationCommand, entitySt
     ctx.fail("Customer location already removed");
   }
   else {
-    // Create the event.    
+    // Create the event.
     const customerLocationRemoved = {
       type: "CustomerLocationRemoved",
       customerLocationId: removeCustomerLocationCommand.customerLocationId
     };
     // Emit the event.
     ctx.emit(customerLocationRemoved);
-    eventPublisher.publish(customerLocationRemoved);
     return {};
   }
 }
@@ -177,7 +174,7 @@ entity.activateDevice = function(activateDeviceCommand, entityState, ctx) {
       ctx.fail("Device already activated");
     }
     else {
-      // Create the event.    
+      // Create the event.
       const deviceActivated = {
         type: "DeviceActivated",
         customerLocationId: activateDeviceCommand.customerLocationId,
@@ -185,7 +182,6 @@ entity.activateDevice = function(activateDeviceCommand, entityState, ctx) {
       };
       // Emit the event.
       ctx.emit(deviceActivated);
-      eventPublisher.publish(deviceActivated);
       return {};
     }
   }
@@ -233,7 +229,7 @@ entity.removeDevice = function(removeDeviceCommand, entityState, ctx) {
       ctx.fail("Device does not exist");
     }
     else {
-      // Create the event.    
+      // Create the event.
         const deviceRemoved = {
         type: "DeviceRemoved",
         customerLocationId: removeDeviceCommand.customerLocationId,
@@ -241,7 +237,6 @@ entity.removeDevice = function(removeDeviceCommand, entityState, ctx) {
       };
       // Emit the event.
       ctx.emit(deviceRemoved);
-      eventPublisher.publish(deviceRemoved);
       return {};
     }
   }
@@ -283,7 +278,7 @@ entity.assignRoom =function(assignRoomCommand, entityState, ctx) {
       ctx.fail("Device does not exist");
     }
     else {
-      // Create the event.    
+      // Create the event.
       const roomAssigned = {
         type: "RoomAssigned",
         customerLocationId: assignRoomCommand.customerLocationId,
@@ -292,7 +287,6 @@ entity.assignRoom =function(assignRoomCommand, entityState, ctx) {
       };
       // Emit the event.
       ctx.emit(roomAssigned);
-      eventPublisher.publish(roomAssigned);
       return {};
     }
   }
@@ -345,8 +339,6 @@ entity.toggleNightlight = function(toggleNightlightCommand, entityState, ctx) {
 
       // Emit the event.
       ctx.emit(nightlightToggled);
-      eventPublisher.publish(nightlightToggled);
-      deviceClient.toggleNightlight(entityState.accessToken, toggleNightlightCommand.deviceId);
       return {};
     }
   }
@@ -386,5 +378,4 @@ entity.getCustomerLocation = function(getCustomerLocationCommand, entityState, c
   }
 }
 
-// Export the entity
-module.exports = entity;
+export default entity;
