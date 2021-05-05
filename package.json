@@ -25,14 +25,14 @@
     "mocha": "^8.3.1"
   },
   "config": {
-    "dockerImage": "t3chi3/akkaserverless-wirelessmesh-javascript",
-    "sourceDir": "./src",
+    "dockerImage": "akkaserverless-wirelessmesh-javascript",
+    "sourceDir": ".",
     "testSourceDir": "./test",
     "protoSourceDir": "./proto",
     "generatedSourceDir": "./lib/generated"
   },
   "scripts": {
-    "start": "node src/index.js",
+    "start": "src/node index.js",
     "test": "mocha ./test",
     "build": "akkasls-scripts build",
     "package": "akkasls-scripts package",
