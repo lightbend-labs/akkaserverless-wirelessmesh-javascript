@@ -13,5 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+const View = require("@lightbend/akkaserverless-javascript-sdk").View;
 
-require("./wirelessmesh.js").start();
+const view = new View(
+  ["customerlocationview.proto"],
+  "customerlocationview.CustomerLocationByEmailService",
+  {
+    viewId: "customer-location-view"
+  }
+);
+
+view.setUpdateHandlers({
+    "UpdateCustomerLocation": updateCustomerLocation
+});
+
+function updateCustomerLocation(customerLocationAdded, previousViewState, ctx) {
+    return {
+        "customerLocationId": customerLocationAdded.customerLocationId,
+        "email": customerLocationAdded.email
+    };
+}
+
+module.exports = view;
