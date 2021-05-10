@@ -10,7 +10,7 @@
   },
   "type": "module",
   "engines": {
-    "node": ">=12.0.0",
+    "node": ">=13.0.0",
     "npm": ">=6.0.0"
   },
   "dependencies": {
@@ -26,13 +26,13 @@
   },
   "config": {
     "dockerImage": "akkaserverless-wirelessmesh-javascript",
-    "sourceDir": ".",
+    "sourceDir": ".src",
     "testSourceDir": "./test",
     "protoSourceDir": "./proto",
     "generatedSourceDir": "./lib/generated"
   },
   "scripts": {
-    "start": "src/node index.js",
+    "start": "node src/index.js",
     "test": "mocha ./test",
     "build": "akkasls-scripts build",
     "package": "akkasls-scripts package",
