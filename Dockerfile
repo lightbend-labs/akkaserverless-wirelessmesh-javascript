@@ -5,8 +5,8 @@
 FROM node:15.10.0-buster-slim AS builder
 
 # workaround for node-gyp problem.
-RUN apt-get update && apt-get install -y python3 make g++ && rm -rf /var/lib/apt/lists/*
-#RUN apt-get update && apt-get install -y python3 make g++ && npm install -g npm@6.14.13 && rm -rf /var/lib/apt/lists/*
+#RUN apt-get update && apt-get install -y python3 make g++ && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y python3 make g++ && npm install -g npm@6.14.13 && rm -rf /var/lib/apt/lists/*
 
 # Set the working directory
 WORKDIR /home/node
@@ -31,6 +31,9 @@ WORKDIR /home/node
 
 # Copy dependencies
 COPY --from=builder --chown=node /home/node/node_modules node_modules/
+
+# Copy source code
+COPY --from=builder --chown=node /home/node/src src/
 
 # Copy the app
 COPY --from=builder --chown=node \
