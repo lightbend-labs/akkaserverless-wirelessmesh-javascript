@@ -15,7 +15,7 @@
  */
 const View = require("@lightbend/akkaserverless-javascript-sdk").View;
 
-const view = new View(
+const entity = new View(
   ["customerlocationview.proto"],
   "customerlocationview.CustomerLocationByEmailService",
   {
@@ -23,7 +23,7 @@ const view = new View(
   }
 );
 
-view.setUpdateHandlers({
+entity.setUpdateHandlers({
     "UpdateCustomerLocation": updateCustomerLocation
 });
 
@@ -34,4 +34,4 @@ function updateCustomerLocation(customerLocationAdded, previousViewState, ctx) {
     };
 }
 
-module.exports = view;
+module.exports = entity;
