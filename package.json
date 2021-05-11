@@ -20,9 +20,9 @@
     "grpc": "1.24.4"
   },
   "devDependencies": {
-    "@lightbend/akkasls-scripts": "^0.21.0",
-    "chai": "^4.3.3",
-    "mocha": "^8.3.1"
+    "@lightbend/akkasls-scripts": "0.21.0",
+    "chai": "4.3.4",
+    "mocha": "8.3.2"
   },
   "config": {
     "dockerImage": "akkaserverless-wirelessmesh-javascript",
