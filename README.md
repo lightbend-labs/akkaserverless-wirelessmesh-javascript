@@ -36,20 +36,54 @@ To connect Akka Serverless to your Google Cloud Pub/Sub you must authenticate us
 Now use the [akkasls](https://developer.lightbend.com/docs/akka-serverless/getting-started/set-up-development-env.html) command-line tool to give Akka Serverless access to your broker:
 
 ```
-akkasls project set broker --broker-service gcp-pubsub --gcp-project-id testing-pubsub-310212 --gcp-key-file testing-pubsub-310212-fec7d0612927.json
+akkasls project set broker --broker-service gcp-pubsub --gcp-key-file testing-pubsub-310212-fec7d0612927.json
 ```
 
 ### LIFX integration for toggling nightlight
 
 If you have an LIFX bulb and would like it to stand in for a wirelessmesh device and have it light on/off when you toggle the device nightlight, you simply have to:
 * Have an operational bulb
-* When you create your customer location, be sure to set the access token to the authorizaton token you requested with LIFX.
+* When you create your customer location, be sure to set the access token to the authorization token you requested with LIFX.
 * When you activate the device in this app, make sure it has the same device id as your bulb.
 * More information [here][https://api.developer.lifx.com]
+
+### Build and run locally
+```
+# NOTE: the easiest way is to run it with node v14
+
+# install packages
+npm ci
+
+# run akkasls-scripts codegen which
+#  (1) Builds Protobuf descriptor file
+#  (2) Runs Akka Serverless JS codegen
+npm run build
+# the above line is equal to command "akkasls-scripts build"
+
+# start the node server at http://localhost:8080
+npm start
+```
+
+If you want to start server in a different port like 8081, you can modify file `src/index.js`
+
+change line
+```
+customerlocationentity.start();
+```
+to
+```
+customerlocationentity.start({bindAddress:'0.0.0.0', bindPort:'8081'});
+```
 
 ### Build your containers
 
 To build your own container, execute the below commands:
+
+```bash
+npm run package
+```
+
+Or run
 
 ```bash
 ## Set your dockerhub username
@@ -58,17 +92,6 @@ export DOCKER_USER=<your dockerhub username>
 
 ## Build a container for the service
 docker build . -t $DOCKER_REGISTRY/$DOCKER_USER/akkaserverless-wirelessmesh-javascript:latest
-```
-
-of if you prefer `npm`, you can run
-
-```bash
-## Set your dockerhub username
-export DOCKER_REGISTRY=docker.io
-export DOCKER_USER=<your dockerhub username>
-
-## Build a container for the service
-npm run dockerbuild
 ```
 
 ### Deploy your container
