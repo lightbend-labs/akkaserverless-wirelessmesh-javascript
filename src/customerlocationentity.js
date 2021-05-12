@@ -36,10 +36,12 @@ const entity = new EventSourcedEntity(
  *
  * The customerLocationId is the unique entity id
  */
-entity.setInitial(customerLocationId => ({
+entity.setInitial(entityId => ({
+  customerLocationId: entityId,
   added: false,
   removed: false,
   accessToken: "",
+  email: "",
   devices: []})
 );
 
