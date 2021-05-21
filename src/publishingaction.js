@@ -22,11 +22,16 @@ const publishingModel = new Action(
 );
 
 publishingModel.commandHandlers = {
-  PublishCustomerLocationAdded: publishCustomerLocationAdded
+  PublishCustomerLocationAdded: publishCustomerLocationAdded,
+  CatchOthers: CatchOthers
 };
 
 function publishCustomerLocationAdded(customerLocationAdded, context) {
   return customerLocationAdded;
+}
+
+function CatchOthers(event) {
+  return {};
 }
 
 module.exports = publishingModel;
