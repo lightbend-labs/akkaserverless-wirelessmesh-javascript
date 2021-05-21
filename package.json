@@ -8,7 +8,6 @@
     "name": "Sean Walsh",
     "email": "sean.walsh@lightbend.com"
   },
-  "type": "module",
   "engines": {
     "node": ">=13.0.0",
     "npm": ">=6.0.0"

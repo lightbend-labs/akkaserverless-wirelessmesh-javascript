@@ -16,12 +16,15 @@
 
 const Action = require("@lightbend/akkaserverless-javascript-sdk").Action
 
-const publishingModel = new Action(
-  "proto/publishing.proto",
-  "publishing.PublishingService"
+const action = new Action(
+  "publishing.proto",
+  "publishing.PublishingService",
+  {
+    includeDirs: ["./proto"]
+  }
 );
 
-publishingModel.commandHandlers = {
+action.commandHandlers = {
   PublishCustomerLocationAdded: publishCustomerLocationAdded,
   CatchOthers: CatchOthers
 };
@@ -34,4 +37,4 @@ function CatchOthers(event) {
   return {};
 }
 
-module.exports = publishingModel;
+module.exports = action;

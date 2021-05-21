@@ -5,7 +5,7 @@
  *
  * NOTE: Entity IDs are not handled, so all commands are assumed to refer to a single entity.
  */
-export class MockEventSourcedEntity {
+class MockEventSourcedEntity {
   events = [];
   state;
   error;
@@ -69,7 +69,7 @@ export class MockEventSourcedEntity {
  *
  * NOTE: Entity IDs are not handled, so all commands are assumed to refer to a single entity.
  */
-export class MockValueEntity {
+class MockValueEntity {
   state;
   error;
   grpcService;
@@ -119,7 +119,7 @@ export class MockValueEntity {
  * Generic mock CommandContext for any Akka Serverless entity
  * @type { import("../lib/akkaserverless").CommandContext }
  */
-export class MockCommandContext {
+class MockCommandContext {
   effects = [];
   thenForward = () => {};
   error;
@@ -156,7 +156,7 @@ export class MockCommandContext {
  *
  * @type { import("../lib/akkaserverless").EventSourcedCommandContext<unknown> }
  */
-export class MockEventSourcedCommandContext extends MockCommandContext {
+class MockEventSourcedCommandContext extends MockCommandContext {
   events = [];
 
   emit(event) {
@@ -173,7 +173,7 @@ export class MockEventSourcedCommandContext extends MockCommandContext {
  *
  * @type { import("../lib/akkaserverless").ValueEntityCommandContext<unknown> }
  */
-export class MockValueEntityCommandContext extends MockCommandContext {
+class MockValueEntityCommandContext extends MockCommandContext {
   updatedState = undefined;
   delete = false;
 
@@ -185,3 +185,5 @@ export class MockValueEntityCommandContext extends MockCommandContext {
     this.delete = true;
   }
 }
+
+module.exports=MockEventSourcedEntity

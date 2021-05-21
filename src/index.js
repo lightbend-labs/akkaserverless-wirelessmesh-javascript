@@ -13,6 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import customerlocationentity from "./customerlocationentity.js";
+const AkkaServerless = require("@lightbend/akkaserverless-javascript-sdk").AkkaServerless;
 
-customerlocationentity.start();
+const server = new AkkaServerless();
+server.addComponent(require("./customerlocationentity"));
+server.addComponent(require("./customerlocationview"));
+server.addComponent(require("./publishingaction"));
+server.addComponent(require("./togglenightlightaction"));
+
+server.start();

@@ -1,6 +1,8 @@
-import { MockEventSourcedEntity } from "./testkit.js";
-import { expect } from "chai";
-import myserviceentity from "../src/customerlocationentity.js";
+//import { MockEventSourcedEntity } from "./testkit.js";
+const MockEventSourcedEntity = require("./testkit");
+var chai = require("chai");
+var expect = chai.expect;
+const myserviceentity = require("../src/customerlocationentity.js");
 
 describe("customerlocationentity", () => {
   const entityId = "entityId";

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { EventSourcedEntity } from "@lightbend/akkaserverless-javascript-sdk";
+const EventSourcedEntity = require("@lightbend/akkaserverless-javascript-sdk").EventSourcedEntity;
 
 const entity = new EventSourcedEntity(
   [
@@ -385,4 +385,4 @@ function getCustomerLocation(getCustomerLocationCommand, entityState, ctx) {
   }
 }
 
-export default entity;
+module.exports = entity;

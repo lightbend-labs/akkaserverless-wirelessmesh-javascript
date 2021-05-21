@@ -16,12 +16,15 @@
 
 const Action = require("@lightbend/akkaserverless-javascript-sdk").Action
 
-const deviceControlModel = new Action(
-  "proto/devicecontrol.proto",
-  "devicecontrol.DeviceControlService"
+const action = new Action(
+  "devicecontrol.proto",
+  "devicecontrol.DeviceControlService",
+  {
+    includeDirs: ["./proto"]
+  }
 );
 
-deviceControlModel.commandHandlers = {
+action.commandHandlers = {
   SendNightlightToggled: sendNightlightToggled
 };
 
@@ -36,4 +39,4 @@ function sendNightlightToggled(nightlightToggled, context) {
   return {};
 }
 
-module.exports = deviceControlModel;
+module.exports = action;
