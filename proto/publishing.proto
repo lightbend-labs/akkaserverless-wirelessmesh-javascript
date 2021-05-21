@@ -16,7 +16,6 @@
 
 syntax = "proto3";
 
-import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
 import "google/protobuf/any.proto";
 import "akkaserverless/annotations.proto";
@@ -29,26 +28,15 @@ service PublishingService {
   rpc PublishCustomerLocationAdded(wirelessmeshdomain.CustomerLocationAdded) returns (wirelessmeshdomain.CustomerLocationAdded) {
     option (akkaserverless.method).eventing = {
       in: {
-        event_sourced_entity: "customer-location-entity";
+        event_sourced_entity: "customer-location-entity"
       }
       out: {
-        topic: "wirelessmesh";
+        topic: "wirelessmesh"
       }
     };
   }
 
-  rpc PublishCustomerLocationRemoved(wirelessmeshdomain.CustomerLocationRemoved) returns (wirelessmeshdomain.CustomerLocationRemoved) {
-      option (akkaserverless.method).eventing = {
-        in: {
-          event_sourced_entity: "customer-location-entity";
-        }
-        out: {
-          topic: "wirelessmesh";
-        }
-      };
-    }
-
-    // handle other events which are not managed above
+  // handle other events which are not managed above
   rpc CatchOthers(google.protobuf.Any) returns (google.protobuf.Empty) {
     option (akkaserverless.method).eventing.in = {
         event_sourced_entity:  "customer-location-entity"

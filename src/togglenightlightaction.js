@@ -30,7 +30,7 @@ action.commandHandlers = {
 
 function sendNightlightToggled(nightlightToggled, context) {
   const bearer = 'Bearer ' + nightlightToggled.accessToken;
-  await fetch("https://api.lifx.com/v1/lights/" + nightlightToggled.deviceId + "/toggle", {
+  fetch("https://api.lifx.com/v1/lights/" + nightlightToggled.deviceId + "/toggle", {
     method: 'POST',
     headers: {
       'Authorization': bearer
