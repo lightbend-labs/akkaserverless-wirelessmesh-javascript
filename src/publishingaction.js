@@ -17,10 +17,10 @@
 const Action = require("@lightbend/akkaserverless-javascript-sdk").Action
 
 const action = new Action(
-  "publishing.proto",
+  ["publishing.proto", "domain/wirelessmeshdomain.proto"],
   "publishing.PublishingService",
   {
-    includeDirs: ["./proto"]
+    includeDirs: ["./proto", "./proto/wirelessmeshdomain"]
   }
 );
 
@@ -30,6 +30,7 @@ action.commandHandlers = {
 };
 
 function publishCustomerLocationAdded(customerLocationAdded, context) {
+  console.log("publishing...")
   return customerLocationAdded;
 }
 
