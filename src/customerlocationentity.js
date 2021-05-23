@@ -22,9 +22,8 @@ const entity = new EventSourcedEntity(
     "wirelessmesh.proto"
   ],
   "wirelessmesh.WirelessMeshService",
-  "wirelessmeshservice",
+  "customer-location-entity",
   {
-    entityType: "customer-location-entity",
     includeDirs: ["./proto"],
     serializeFallbackToJson: true
   }
