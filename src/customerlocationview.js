@@ -25,7 +25,8 @@ const view = new View(
 );
 
 view.setUpdateHandlers({
-    "UpdateCustomerLocation": updateCustomerLocation
+    "UpdateCustomerLocation": updateCustomerLocation,
+    "CatchOthers": CatchOthers
 });
 
 function updateCustomerLocation(customerLocationAdded, previousViewState, ctx) {
@@ -33,6 +34,10 @@ function updateCustomerLocation(customerLocationAdded, previousViewState, ctx) {
         "customerLocationId": customerLocationAdded.customerLocationId,
         "email": customerLocationAdded.email
     };
+}
+
+function CatchOthers(event) {
+  return {};
 }
 
 module.exports = view;
