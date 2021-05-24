@@ -29,6 +29,10 @@ const entity = new EventSourcedEntity(
   }
 );
 
+const domain = {
+  CustomerLocationAdded: entity.lookupType("wirelessmeshdomain.CustomerLocationAdded")
+}
+
 /*
  * Set a callback to create the initial state. This is what is created if there is no
  * snapshot to load.
@@ -91,12 +95,11 @@ function addCustomerLocation(addCustomerLocationCommand, entityState, ctx) {
   }
   else {
     // Create the event.
-    const customerLocationAdded = {
-      type: "CustomerLocationAdded",
+    const customerLocationAdded = domain.CustomerLocationAdded.create({
       customerLocationId: addCustomerLocationCommand.customerLocationId,
       accessToken: addCustomerLocationCommand.accessToken,
       email: addCustomerLocationCommand.email
-    };
+    });
     // Emit the event.
     ctx.emit(customerLocationAdded);
     return {};
