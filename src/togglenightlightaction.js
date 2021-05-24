@@ -39,4 +39,8 @@ function sendNightlightToggled(nightlightToggled, context) {
   return {};
 }
 
+function CatchOthers(event) {
+  return {};
+}
+
 module.exports = action;
