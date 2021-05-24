@@ -25,7 +25,8 @@ const action = new Action(
 );
 
 action.commandHandlers = {
-  SendNightlightToggled: sendNightlightToggled
+  SendNightlightToggled: sendNightlightToggled,
+  CatchOthers: CatchOthers
 };
 
 function sendNightlightToggled(nightlightToggled, context) {
