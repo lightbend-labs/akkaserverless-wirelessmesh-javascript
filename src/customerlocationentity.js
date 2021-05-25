@@ -29,8 +29,15 @@ const entity = new EventSourcedEntity(
   }
 );
 
+const domainPkg = "wirelessmeshdomain.";
+
 const domain = {
-  CustomerLocationAdded: entity.lookupType("wirelessmeshdomain.CustomerLocationAdded")
+  CustomerLocationAdded: entity.lookupType(domainPkg + "CustomerLocationAdded"),
+  CustomerLocationRemoved: entity.lookupType(domainPkg + "CustomerLocationRemoved"),
+  DeviceActivated: entity.lookupType(domainPkg + "DeviceActivated"),
+  DeviceRemoved: entity.lookupType(domainPkg + "DeviceRemoved"),
+  RoomAssigned: entity.lookupType(domainPkg + "RoomAssigned"),
+  NightlightToggled: entity.lookupType(domainPkg + "NightlightToggled"),
 }
 
 /*
@@ -139,10 +146,9 @@ function removeCustomerLocation(removeCustomerLocationCommand, entityState, ctx)
   }
   else {
     // Create the event.
-    const customerLocationRemoved = {
-      type: "CustomerLocationRemoved",
+    const customerLocationRemoved = domain.CustomerLocationRemoved.create({
       customerLocationId: removeCustomerLocationCommand.customerLocationId
-    };
+    });
     // Emit the event.
     ctx.emit(customerLocationRemoved);
     return {};
@@ -184,11 +190,10 @@ function activateDevice(activateDeviceCommand, entityState, ctx) {
     }
     else {
       // Create the event.
-      const deviceActivated = {
-        type: "DeviceActivated",
+      const deviceActivated = domain.DeviceActivated.create({
         customerLocationId: activateDeviceCommand.customerLocationId,
         deviceId: activateDeviceCommand.deviceId
-      };
+      });
       // Emit the event.
       ctx.emit(deviceActivated);
       return {};
@@ -239,11 +244,10 @@ function removeDevice(removeDeviceCommand, entityState, ctx) {
     }
     else {
       // Create the event.
-        const deviceRemoved = {
-        type: "DeviceRemoved",
+        const deviceRemoved = domain.DeviceRemoved.create({
         customerLocationId: removeDeviceCommand.customerLocationId,
         deviceId: removeDeviceCommand.deviceId
-      };
+      });
       // Emit the event.
       ctx.emit(deviceRemoved);
       return {};
@@ -288,12 +292,11 @@ function assignRoom(assignRoomCommand, entityState, ctx) {
     }
     else {
       // Create the event.
-      const roomAssigned = {
-        type: "RoomAssigned",
+      const roomAssigned = domain.RoomAssigned.create({
         customerLocationId: assignRoomCommand.customerLocationId,
         deviceId: assignRoomCommand.deviceId,
         room: assignRoomCommand.room
-      };
+      });
       // Emit the event.
       ctx.emit(roomAssigned);
       return {};
@@ -339,12 +342,11 @@ function toggleNightlight(toggleNightlightCommand, entityState, ctx) {
       ctx.fail("Device does not exist");
     }
     else {
-      const nightlightToggled = {
-        type: "NightlightToggled",
+      const nightlightToggled = domain.NightlightToggled.create({
         customerLocationId: toggleNightlightCommand.customerLocationId,
         deviceId: toggleNightlightCommand.deviceId,
         nightlightOn: !existing.nightlightOn
-      };
+      });
 
       // Emit the event.
       ctx.emit(nightlightToggled);
