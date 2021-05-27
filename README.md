@@ -29,6 +29,7 @@ To build and deploy this example application, you'll need to have:
 
 ### Prepare your Google Cloud Pubsub
 Javascript version wirelessmesh app uses the same Google Cloud Pub/Sub setup as java version.
+
 Please refer [the Java Version](https://github.com/lightbend-labs/akkaserverless-wirelessmesh-java#prepare-your-google-could-pubsub)
 
 ### LIFX integration for toggling nightlight
@@ -108,11 +109,13 @@ _The above command will deploy your container to your project with the name `wir
 ### How to check if data is written to Google Cloud Pub/Sub
 
 Javascript version wirelessmesh app uses the same Google Cloud Pub/Sub setup as java version.
+
 Please refer [the Java Version](https://github.com/lightbend-labs/akkaserverless-wirelessmesh-java#how-to-check-if-data-is-written-to-google-cloud-pubsub)
 
 
 ### Testing your service with restful api
 Javascript version wirelessmesh app uses the same testful api.
+
 Please refer [the Java Version](https://github.com/lightbend-labs/akkaserverless-wirelessmesh-java#testing-your-service-with-restful-api)
 
 
