@@ -28,16 +28,8 @@ To build and deploy this example application, you'll need to have:
 ## Build, Deploy, and Test
 
 ### Prepare your Google Cloud Pubsub
-
-Create a Pub/Sub topic called 'wirelessmesh' under your own Google Cloud account.
-
-To connect Akka Serverless to your Google Cloud Pub/Sub you must authenticate using a service account. To create your [service account](https://cloud.google.com/docs/authentication/production#cloud-console). After creating your service account, you need to download the service account key as a JSON file.
-
-Now use the [akkasls](https://developer.lightbend.com/docs/akka-serverless/getting-started/set-up-development-env.html) command-line tool to give Akka Serverless access to your broker:
-
-```
-akkasls project set broker --broker-service gcp-pubsub --gcp-key-file testing-pubsub-310212-fec7d0612927.json
-```
+Javascript version wirelessmesh app uses the same Google Cloud Pub/Sub setup as java version.
+Please refer [the Java Version](https://github.com/lightbend-labs/akkaserverless-wirelessmesh-java#prepare-your-google-could-pubsub)
 
 ### LIFX integration for toggling nightlight
 
@@ -113,71 +105,16 @@ akkasls svc deploy wirelessmesh $DOCKER_REGISTRY/$DOCKER_USER/akkaserverless-wir
 
 _The above command will deploy your container to your project with the name `wirelessmesh`. If you want to have a different name, you can change that._
 
-### Testing your service
+### How to check if data is written to Google Cloud Pub/Sub
 
-To test using Postman(or curl).
-* First install Postman, [found here](https://www.postman.com)
-* Assuming you have deployed to akkaserverless and exposed your service to 'winter-mountain-2372.us-east1.apps.akkaserverless.com'...
-* Create a Postman POST request to 'https://winter-mountain-2372.us-east1.apps.akkaserverless.com/wirelessmesh/add-customer-location' with the json body '{"customer_location_id": "my-first-location", "access_token": "my lifx access token if applicable in alphanumeric"}'
+Javascript version wirelessmesh app uses the same Google Cloud Pub/Sub setup as java version.
+Please refer [the Java Version](https://github.com/lightbend-labs/akkaserverless-wirelessmesh-java#how-to-check-if-data-is-written-to-google-cloud-pubsub)
 
-Or using Curl (NOTE: Assume access_token is "abcd1234", you can set it to any alphanumeric):
-```
-export AS_HOST=winter-mountain-2372.us-east1.apps.akkaserverless.com
 
-curl -X POST -H "Content-Type: application/json"  --data '{"customer_location_id": "my-first-location", "access_token": "abcd1234"}' https://${AS_HOST}/wirelessmesh/add-customer-location
-```
-* You should see a response of '200(OK) {}', this will be the response of any POST
-* You can now create a GET request to 'https://winter-mountain-2372.us-east1.apps.akkaserverless.com/wirelessmesh/get-customer-location?customer_location_id=my-first-location'
+### Testing your service with restful api
+Javascript version wirelessmesh app uses the same testful api.
+Please refer [the Java Version](https://github.com/lightbend-labs/akkaserverless-wirelessmesh-java#testing-your-service-with-restful-api)
 
-Or using Curl:
-```
-curl https://${AS_HOST}/wirelessmesh/get-customer-location?customer_location_id=my-first-location
-```
-* You should see a json response containing your customer location and no devices.
-* Create a POST request to 'https://winter-mountain-2372.us-east1.apps.akkaserverless.com/wirelessmesh/activate-device' with the body '{"customer_location_id": "my-first-location", "device_id": "my-first-device"}'
-
-Or using Curl:
-```
-curl -X POST -H "Content-Type: application/json"  --data '{"customer_location_id": "my-first-location", "device_id": "my-first-device"}' https://${AS_HOST}/wirelessmesh/activate-device
-```
-* Create a POST request to 'https://winter-mountain-2372.us-east1.apps.akkaserverless.com/wirelessmesh/assign-room' with the body '{"customer_location_id": "my-first-location", "device_id": "my-first-device", "room": "office"}'
-
-Or using Curl:
-```
-curl -X POST -H "Content-Type: application/json"  --data '{"customer_location_id": "my-first-location", "device_id": "my-first-device", "room": "office"}' https://${AS_HOST}/wirelessmesh/assign-room
-```
-* Create a POST requset to 'https://winter-mountain-2372.us-east1.apps.akkaserverless.com/wirelessmesh/toggle-nightlight' with the body '{"customer_location_id": "my-first-location", "device_id": "my-first-device"}'
-
-Or using Curl:
-```
-curl -X POST -H "Content-Type: application/json"  --data '{"customer_location_id": "my-first-location", "device_id": "my-first-device"}' https://${AS_HOST}/wirelessmesh/toggle-nightlight
-```
-* Rerun your get-customer-location request
-
-Or using Curl:
-```
-curl https://${AS_HOST}/wirelessmesh/get-customer-location?customer_location_id=my-first-location
-```
-* You should see a json response with your customer location and a collection of your single device with the room assigned and the nightlight on
-* Create a POST request to 'https://winter-mountain-2372.us-east1.apps.akkaserverless.com/wirelessmesh/remove-device' with the body '{"customer_location_id": "my-first-location", "device_id": "my-first-device"}'
-
-Or using Curl:
-```
-curl -X POST -H "Content-Type: application/json"  --data '{"customer_location_id": "my-first-location", "device_id": "my-first-device"}' https://${AS_HOST}/wirelessmesh/remove-device
-```
-* You should see a json response no longer containing any devices
-* Create a POST request to 'https://winter-mountain-2372.us-east1.apps.akkaserverless.com/wirelessmesh/remove-customer-location' with the body '{"customer_location_id": "my-first-location"}'
-
-Or using Curl:
-```
-curl -X POST -H "Content-Type: application/json"  --data '{"customer_location_id": "my-first-location"}' https://${AS_HOST}/wirelessmesh/remove-customer-location
-```
-* Rerun your get-customer-location request and you will see a server error since it no longer exists.
-
-Or using Curl:
-```
-curl https://${AS_HOST}/wirelessmesh/get-customer-location?customer_location_id=my-first-location
-```
 
 ## Contributing
 
